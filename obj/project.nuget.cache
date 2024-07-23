@@ -1,0 +1,20 @@
+{
+  "version": 2,
+  "dgSpecHash": "fCnDMWC9EKr2hoYc7wra7xCTVvqUaIWdTohhjur3f+GreVewvfRFfiCXQkXJd468MMLVIznCiZKXMm3hvz2tdw==",
+  "success": true,
+  "projectFilePath": "C:\\Users\\korde\\Documents\\CSharp\\BinomialPricer\\BinomialPricer.csproj",
+  "expectedPackageFiles": [
+    "C:\\Users\\korde\\.nuget\\packages\\alpaca.markets\\7.1.0\\alpaca.markets.7.1.0.nupkg.sha512",
+    "C:\\Users\\korde\\.nuget\\packages\\newtonsoft.json\\13.0.3\\newtonsoft.json.13.0.3.nupkg.sha512",
+    "C:\\Users\\korde\\.nuget\\packages\\polly\\8.3.1\\polly.8.3.1.nupkg.sha512",
+    "C:\\Users\\korde\\.nuget\\packages\\polly.core\\8.3.1\\polly.core.8.3.1.nupkg.sha512",
+    "C:\\Users\\korde\\.nuget\\packages\\scottplot\\5.0.36\\scottplot.5.0.36.nupkg.sha512",
+    "C:\\Users\\korde\\.nuget\\packages\\skiasharp\\2.88.8\\skiasharp.2.88.8.nupkg.sha512",
+    "C:\\Users\\korde\\.nuget\\packages\\skiasharp.nativeassets.linux.nodependencies\\2.88.8\\skiasharp.nativeassets.linux.nodependencies.2.88.8.nupkg.sha512",
+    "C:\\Users\\korde\\.nuget\\packages\\skiasharp.nativeassets.macos\\2.88.8\\skiasharp.nativeassets.macos.2.88.8.nupkg.sha512",
+    "C:\\Users\\korde\\.nuget\\packages\\skiasharp.nativeassets.win32\\2.88.8\\skiasharp.nativeassets.win32.2.88.8.nupkg.sha512",
+    "C:\\Users\\korde\\.nuget\\packages\\system.io.pipelines\\8.0.0\\system.io.pipelines.8.0.0.nupkg.sha512",
+    "C:\\Users\\korde\\.nuget\\packages\\system.threading.channels\\8.0.0\\system.threading.channels.8.0.0.nupkg.sha512"
+  ],
+  "logs": []
+}

@@ -6,8 +6,8 @@ namespace BinomialPricer
 {
     internal static class Program
     {
-        private const String KEY_ID = "PK7KKSAXK51R1LGHAXBJ";
-        private const String SECRET_KEY = "gpwUAVHxBdJn4ZuYVHCfNmKoKKwB6QnvPnIXnZeu";
+        private const String KEY_ID = "";
+        private const String SECRET_KEY = "";
 
         public static async Task Main()
         {

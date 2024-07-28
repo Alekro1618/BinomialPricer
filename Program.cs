@@ -14,7 +14,7 @@ namespace BinomialPricer
             var key = new SecretKey(KEY_ID, SECRET_KEY);
             var client = Environments.Paper
                 .GetAlpacaTradingClient(key);
-            var symbol = "BTC/USD";
+            var symbol = "ETH/USD";
             var clock = await client.GetClockAsync();
             var data_client = Environments.Paper
                 .GetAlpacaCryptoDataClient(key);
@@ -43,23 +43,21 @@ namespace BinomialPricer
                 decimal currentPrice = lastPrice;
                 BinModel model = new BinModel((double)currentPrice, up, down, Math.Abs(exp));
 
-                double callOpt = Option.PriceByCRR(model, 10, (double)currentPrice * (1+exp), Option.CallPayoff);
-                double putOpt = Option.PriceByCRR(model, 10, (double)currentPrice * (1+exp), Option.PutPayoff);
+                double callOpt = Option.PriceByCRR(model, 36, (double)currentPrice * (1+exp), Option.CallPayoff);
+                double putOpt = Option.PriceByCRR(model, 36, (double)currentPrice * (1+exp), Option.PutPayoff);
                 double delta = callOpt - putOpt;
 
                 //Making the decision
                 if (delta > 0) {
                     Console.WriteLine("Best Option -> Call. Profit: {0}", callOpt);
                     if (!account.GetOrderStatus()) {
-                        account.ChangeOrderStatus();
-                        await account.MakeOrder(symbol, (decimal)0.0001, currentPrice *(decimal)(1+exp), "BUY", 30);
+                        await account.MakeOrder(symbol, (decimal)0.01, currentPrice *(decimal)(1+exp), "BUY", 360);
                     }
 
                 } else {
                     Console.WriteLine("Best Option -> Put. Profit: {0}", putOpt);
                     if (account.GetOrderStatus()) {
-                        account.ChangeOrderStatus();
-                        await account.MakeOrder(symbol, (decimal)0.0001, currentPrice *(decimal)(1+exp), "SELL", 30);
+                        await account.MakeOrder(symbol, (decimal)0.01, currentPrice *(decimal)(1+exp), "SELL", 360);
                     }
                 }
 

@@ -19,7 +19,7 @@ namespace BinomialPricer {
                         order = await client.PostOrderAsync(LimitOrder.Sell(symbol.Replace("/", string.Empty), OrderQuantity.Fractional(qty), limit).WithDuration(TimeInForce.Gtc));    
                     }
                     ChangeOrderStatus();
-                    Console.WriteLine("Order was filled!");
+                    Console.WriteLine("Order was accepted!");
                     ordered = true;
                     WaitToExpire(order, client, expiration);
                     break;
@@ -51,6 +51,7 @@ namespace BinomialPricer {
             try {
                 client.CancelOrderAsync(id);
                 ChangeOrderStatus();
+                Console.WriteLine(isOrderPut);
                 Console.WriteLine("Order canceled");
             } catch {
                 Console.WriteLine("Failed to cancel order!");

@@ -29,3 +29,4 @@ C:\Users\korde\Documents\CSharp\BinomialPricer\bin\Debug\net8.0\runtimes\osx\nat
 C:\Users\korde\Documents\CSharp\BinomialPricer\bin\Debug\net8.0\runtimes\win-arm64\native\libSkiaSharp.dll
 C:\Users\korde\Documents\CSharp\BinomialPricer\bin\Debug\net8.0\runtimes\win-x64\native\libSkiaSharp.dll
 C:\Users\korde\Documents\CSharp\BinomialPricer\bin\Debug\net8.0\runtimes\win-x86\native\libSkiaSharp.dll
+C:\Users\korde\Documents\CSharp\BinomialPricer\obj\Debug\net8.0\BinomialPricer.sourcelink.json

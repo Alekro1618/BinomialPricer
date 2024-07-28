@@ -6,8 +6,8 @@ namespace BinomialPricer
 {
     internal static class Program
     {
-        private const String KEY_ID = "PK7KKSAXK51R1LGHAXBJ";
-        private const String SECRET_KEY = "gpwUAVHxBdJn4ZuYVHCfNmKoKKwB6QnvPnIXnZeu";
+        private const String KEY_ID = "";
+        private const String SECRET_KEY = "";
 
         public static async Task Main()
         {
@@ -18,6 +18,7 @@ namespace BinomialPricer
             var clock = await client.GetClockAsync();
             var data_client = Environments.Paper
                 .GetAlpacaCryptoDataClient(key);
+            var account = new AccountOrders(client);
 
             if (clock != null)
             {
@@ -26,15 +27,13 @@ namespace BinomialPricer
                     clock.TimestampUtc, clock.NextOpenUtc, clock.NextCloseUtc);
             }
 
-
-            bool isOrderPut = false;
             for (int i = 0; i < 50; i++) {
                 //Geting historical data
                 var bars = await data_client.ListHistoricalBarsAsync(
                 new HistoricalCryptoBarsRequest(symbol, clock.TimestampUtc.AddHours(-1), clock.TimestampUtc, BarTimeFrame.Hour));
 
                 //Drawing Plot
-                await DrawPlot(clock, key, symbol);
+                await HistoricalGraph.DrawPlot(clock, key, symbol);
                 Console.WriteLine("Plot was updated");
 
                 //Setting up Binomial Model with Ods
@@ -51,16 +50,16 @@ namespace BinomialPricer
                 //Making the decision
                 if (delta > 0) {
                     Console.WriteLine("Best Option -> Call. Profit: {0}", callOpt);
-                    if (isOrderPut == false) {
-                        isOrderPut = true;
-                        await MakeOrder(client, symbol, 1, currentPrice *(decimal)(1+exp), "BUY");
+                    if (!account.GetOrderStatus()) {
+                        account.ChangeOrderStatus();
+                        await account.MakeOrder(symbol, (decimal)0.0001, currentPrice *(decimal)(1+exp), "BUY", 30);
                     }
 
                 } else {
                     Console.WriteLine("Best Option -> Put. Profit: {0}", putOpt);
-                    if (isOrderPut == true) {
-                        isOrderPut = false;
-                        await MakeOrder(client, symbol, 1, currentPrice *(decimal)(1+exp), "SELL");
+                    if (account.GetOrderStatus()) {
+                        account.ChangeOrderStatus();
+                        await account.MakeOrder(symbol, (decimal)0.0001, currentPrice *(decimal)(1+exp), "SELL", 30);
                     }
                 }
 
@@ -88,77 +87,14 @@ namespace BinomialPricer
             }
         }
 
-        public static async Task MakeOrder(IAlpacaTradingClient client, string symbol, decimal qty, decimal limit, string type) {
-            IOrder order;
-            bool ordered = false;
-            for(int j = 0; j < 10; j++) {
-                try {
-                    if (type == "BUY") {
-                        order = await client.PostOrderAsync(LimitOrder.Buy(symbol.Replace("/", string.Empty), OrderQuantity.Fractional(qty), limit).WithDuration(TimeInForce.Gtc));
-                        //while(order.OrderStatus != OrderStatus.Filled) {
-                        //    Console.WriteLine("Waiting for order to be filled...");
-                        //    Thread.Sleep(10000);
-                        //}
-                        Console.WriteLine("Order was filled!");
-                        break;
-                    } else {
-                        order = await client.PostOrderAsync(LimitOrder.Sell(symbol.Replace("/", string.Empty), OrderQuantity.Fractional(qty), limit).WithDuration(TimeInForce.Gtc));
-                        //while(order.OrderStatus != OrderStatus.Filled) {
-                        //    Console.WriteLine("Waiting for order to be filled...");
-                        //    Thread.Sleep(10000);
-                        //}
-                        Console.WriteLine("Order was filled!");
-                        break;
-                    }
-                    ordered = true;
-                    
-                } catch {
-                    Console.WriteLine("Error. Trying to to make order again");
-                    continue;
-                }
-            }
-            if (ordered == false) {
-                throw new TaskCanceledException();
+        public static void ChangeOrderState(ref bool isPut) {
+            if (isPut) {
+                isPut = false;
+            } else {
+                isPut = true;
             }
         }
 
-        public static async Task DrawPlot(IClock clock, SecretKey key, string symbol) {
-             var data_client = Environments.Paper
-                .GetAlpacaCryptoDataClient(key);
-            var into = clock.TimestampUtc.AddMinutes(0);
-            var from = into.AddDays(-1);
-            var bars = await data_client.ListHistoricalBarsAsync(
-                new HistoricalCryptoBarsRequest(symbol, from, into, BarTimeFrame.Hour)
-            );
-
-            var upper = new List<double>();
-            var lower = new List<double>();
-            var mean = new List<double>();
-            var times = new List<DateTime>();
-
-            foreach(var bar in bars.Items){
-                (double up, double down, double exp) = await GetTheOds(bar.TimeUtc, data_client, symbol);
-                upper.Add((1+up) * (double)bar.Close);
-                lower.Add((1+down) * (double)bar.Close);
-                mean.Add((1+exp) * (double)bar.Close);
-                times.Add(bar.TimeUtc);
-            }
-
-            var plot = new ScottPlot.Plot();
-            var convbars = new List<ScottPlot.OHLC>();
-            foreach(var bar in bars.Items) {
-                convbars.Add(new ScottPlot.OHLC((double)bar.Open, (double)bar.High, (double)bar.Low, (double)bar.Close, bar.TimeUtc, TimeSpan.FromHours(1)));
-            }
-
-
-            plot.Add.Candlestick(convbars);
-            plot.Add.Scatter(times, upper);
-            plot.Add.Scatter(times, lower);
-            plot.Add.Scatter(times, mean);
-            plot.Axes.DateTimeTicksBottom();
-
-            plot.SavePng("scatter.png",1200, 700);
-        }
 
         public static async Task<(double, double, double)> GetTheOds(DateTime dt, IAlpacaCryptoDataClient data_client, string symbol) {
             var into = dt;

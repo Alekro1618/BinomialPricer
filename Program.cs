@@ -20,6 +20,9 @@ namespace BinomialPricer
                 .GetAlpacaCryptoDataClient(key);
             var account = new AccountOrders(client);
 
+            Backtest test = new Backtest(KEY_ID, SECRET_KEY);
+            
+
             if (clock != null)
             {
                 Console.WriteLine(
